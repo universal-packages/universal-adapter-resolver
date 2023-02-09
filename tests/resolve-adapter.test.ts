@@ -9,6 +9,12 @@ describe('adapter-resolver', (): void => {
       expect(adapter).toEqual(RedisEngine)
     })
 
+    it('resolves the adapter using internal option', async (): Promise<void> => {
+      const adapter = await resolveAdapter('local', { domain: 'token-registry', type: 'engine', internal: { local: 'Yes' } })
+
+      expect(adapter).toEqual('Yes')
+    })
+
     it('throws if the module can not be inferred', async (): Promise<void> => {
       let error: Error
 
@@ -30,7 +36,9 @@ describe('adapter-resolver', (): void => {
         error = err
       }
 
-      expect(error.message).toMatch(/Module "@universal-packages\/token-registry-redis" is declared in package.json but there is a problem importing it, try running "npm install".*/)
+      expect(error.message).toMatch(
+        /Module "@universal-packages\/token-registry-redis" is declared in package.json but there is a problem importing it, try running "npm install".*/
+      )
     })
   })
 })

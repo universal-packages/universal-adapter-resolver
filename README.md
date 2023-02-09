@@ -34,8 +34,19 @@ Options are meant for inferring the matching adapter so the parent library can h
 
 - **`domain`** `String`
   To help infer the module name for example if the adapter is `redis` and is meant to work with `@universal-packages/token-registry` you can just provide here `token-registry`.
+- **`internal`** `Object`
+  An object which keys match an internal adapter provided by the root library.
+  ```js
+  import { resolveAdapter } from '@universal-packages/adapter-resolver'
+
+  const adapter = await resolveAdapter('local', { internal: { local: LocalAdapter } })
+
+  console.log(adapter)
+
+  // > [class LocalAdapter]
+  ```
 - **`type`** `String`
-  To help infer the export name, for example ff the adapter is an "engine", you can provide here `engine` and it will internally will come up with different case variations to try to find the export ex: redisEngine, RedisEngine, redis_engine.
+  To help infer the export name, for example if the adapter is an "engine", you can provide here `engine` and it will internally will come up with different case variations to try to find the export ex: redisEngine, RedisEngine, redis_engine.
 
 ## Typescript
 

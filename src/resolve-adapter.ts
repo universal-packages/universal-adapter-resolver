@@ -2,7 +2,11 @@ import { readPackageJson } from '@universal-packages/package-json'
 import { camelCase, pascalCase, snakeCase } from 'change-case'
 import { ResolveAdapterOptions } from './types'
 
-export async function resolveAdapter<P = any>(name: string, options?: ResolveAdapterOptions): Promise<P> {
+export async function resolveAdapter<A = any>(name: string, options?: ResolveAdapterOptions<A>): Promise<A> {
+  if (options?.internal) {
+    if (options.internal[name]) return options.internal[name]
+  }
+
   const packageJson = readPackageJson()
   const dependencyNames = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies })
   const packageRegExp = `^.*${options?.domain}.*${name}.*$`
