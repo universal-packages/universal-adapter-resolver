@@ -4,13 +4,13 @@ import { resolveAdapter } from '../src'
 describe('adapter-resolver', (): void => {
   describe('resolveAdapter', (): void => {
     it('resolves the adapter using all the cues', async (): Promise<void> => {
-      const adapter = await resolveAdapter('redis', { domain: 'token-registry', type: 'engine' })
+      const adapter = resolveAdapter('redis', { domain: 'token-registry', type: 'engine' })
 
       expect(adapter).toEqual(RedisEngine)
     })
 
     it('resolves the adapter using internal option', async (): Promise<void> => {
-      const adapter = await resolveAdapter('local', { domain: 'token-registry', type: 'engine', internal: { local: 'Yes' } })
+      const adapter = resolveAdapter('local', { domain: 'token-registry', type: 'engine', internal: { local: 'Yes' } })
 
       expect(adapter).toEqual('Yes')
     })
@@ -19,7 +19,7 @@ describe('adapter-resolver', (): void => {
       let error: Error
 
       try {
-        await resolveAdapter('some', { domain: 'base-library', type: 'engine' })
+        resolveAdapter('some', { domain: 'base-library', type: 'engine' })
       } catch (err) {
         error = err
       }
@@ -31,7 +31,7 @@ describe('adapter-resolver', (): void => {
       let error: Error
 
       try {
-        await resolveAdapter('redis', { domain: 'token-registry' })
+        resolveAdapter('redis', { domain: 'token-registry' })
       } catch (err) {
         error = err
       }

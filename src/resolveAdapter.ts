@@ -2,7 +2,7 @@ import { readPackageJson } from '@universal-packages/package-json'
 import { camelCase, pascalCase, snakeCase } from 'change-case'
 import { ResolveAdapterOptions } from './types'
 
-export async function resolveAdapter<A = any>(name: string, options?: ResolveAdapterOptions<A>): Promise<A> {
+export function resolveAdapter<A = any>(name: string, options?: ResolveAdapterOptions<A>): A {
   if (options?.internal) {
     if (options.internal[name]) return options.internal[name]
   }
@@ -15,7 +15,7 @@ export async function resolveAdapter<A = any>(name: string, options?: ResolveAda
 
   if (foundPackageName) {
     try {
-      const importedModule = await import(foundPackageName)
+      const importedModule = require(foundPackageName)
       const baseModuleElementName = options?.type ? `${name}_${options.type}` : name
       const moduleElementNameA = pascalCase(baseModuleElementName)
       const moduleElementNameB = camelCase(baseModuleElementName)

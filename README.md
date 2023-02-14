@@ -21,7 +21,7 @@ Tries to infer an installed module name based on name and options, imports it an
 ```js
 import { resolveAdapter } from '@universal-packages/adapter-resolver'
 
-const adapter = await resolveAdapter('redis', { domain: 'token-registry', type: 'engine' })
+const adapter = resolveAdapter('redis', { domain: 'token-registry', type: 'engine' })
 
 console.log(adapter)
 
@@ -39,7 +39,7 @@ Options are meant for inferring the matching adapter so the parent library can h
   ```js
   import { resolveAdapter } from '@universal-packages/adapter-resolver'
 
-  const adapter = await resolveAdapter('local', { internal: { local: LocalAdapter } })
+  const adapter = resolveAdapter('local', { internal: { local: LocalAdapter } })
 
   console.log(adapter)
 

@@ -1,2 +1,2 @@
-export * from './resolve-adapter'
+export * from './resolveAdapter'
 export * from './types'
