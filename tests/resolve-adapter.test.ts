@@ -1,4 +1,5 @@
 import { RedisEngine } from '@universal-packages/token-registry-redis'
+
 import { resolveAdapter } from '../src'
 
 describe('adapter-resolver', (): void => {

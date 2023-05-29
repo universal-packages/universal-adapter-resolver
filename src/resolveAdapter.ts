@@ -1,5 +1,6 @@
 import { readPackageJson } from '@universal-packages/package-json'
 import { camelCase, pascalCase, snakeCase } from 'change-case'
+
 import { ResolveAdapterOptions } from './types'
 
 export function resolveAdapter<A = any>(name: string, options?: ResolveAdapterOptions<A>): A {
