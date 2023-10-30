@@ -14,14 +14,14 @@ npm install @universal-packages/adapter-resolver
 
 ## Global methods
 
-#### **`resolveAdapter(name: string, [options])`**
+#### **`resolveAdapter(options: Object)`**
 
 Tries to infer an installed module name based on name and options, imports it and infers the desired export based on name and options.
 
 ```js
 import { resolveAdapter } from '@universal-packages/adapter-resolver'
 
-const adapter = resolveAdapter('redis', { domain: 'token-registry', type: 'engine' })
+const adapter = resolveAdapter({ name: 'redis', domain: 'token-registry', type: 'engine' })
 
 console.log(adapter)
 
@@ -30,23 +30,61 @@ console.log(adapter)
 
 #### Options
 
-Options are meant for inferring the matching adapter so the parent library can have a single simple adapter name requirement instead of the whole path of library and export.
+Adapters need to follow the convention in order to be found. domain and name are use to infer the package name and type is used to infer the export name.
 
+- **`name`** `String`
+  The name of the adapter, for example `redis`.
 - **`domain`** `String`
-  To help infer the module name for example if the adapter is `redis` and is meant to work with `@universal-packages/token-registry` you can just provide here `token-registry`.
+  The domain for which the adapter will work for example if the adapter is `redis` and is meant to work with `@universal-packages/token-registry` you provide here `token-registry`.
 - **`internal`** `Object`
   An object which keys match an internal adapter provided by the root library.
+
   ```js
   import { resolveAdapter } from '@universal-packages/adapter-resolver'
 
-  const adapter = resolveAdapter('local', { internal: { local: LocalAdapter } })
+  const adapter = resolveAdapter('local', { internal: { domain: 'token-registry', type: 'engine', local: LocalAdapter } })
 
   console.log(adapter)
 
   // > [class LocalAdapter]
   ```
+
 - **`type`** `String`
-  To help infer the export name, for example if the adapter is an "engine", you can provide here `engine` and it will internally will come up with different case variations to try to find the export ex: redisEngine, RedisEngine, redis_engine.
+  The package needs to export something in the format `<name><type>`, for example if the adapter is an "engine", you provide here `engine` and it will internally will come up with different case variations of the format to find the export ex: redisEngine, RedisEngine, redis_engine.
+
+#### **`gatherAdapters(options: Object)`**
+
+Gather of the adapters of a type under the same domain.
+
+```js
+import { gatherAdapters } from '@universal-packages/adapter-resolver'
+
+const adapters = gatherAdapters({ domain: 'token-registry', type: 'engine' })
+
+console.log(adapters)
+
+// > [[class RedisEngine], [class LocalEngine]]
+```
+
+#### Options
+
+- **`domain`** `String`
+  The domain under which the adapters are meant to work, for example all engines for `@universal-packages/token-registry` will have the same domain `token-registry`.
+- **`internal`** `Array`
+  An array of internal adapters provided by the root library to be mixed with the gathered adapters.
+
+  ```js
+  import { gatherAdapters } from '@universal-packages/adapter-resolver'
+
+  const adapters = gatherAdapters({ domain: 'token-registry', type: 'engine', internal: { local: InternalAdapter } })
+
+  console.log(adapters)
+
+  // > [[class InternalAdapter], [class RedisEngine], [class LocalAdapter]]
+  ```
+
+- **`type`** `String`
+  The type of the adapters, for example `engine`.
 
 ## Typescript
 

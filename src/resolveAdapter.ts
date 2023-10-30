@@ -3,21 +3,23 @@ import { camelCase, pascalCase, snakeCase } from 'change-case'
 
 import { ResolveAdapterOptions } from './types'
 
-export function resolveAdapter<A = any>(name: string, options?: ResolveAdapterOptions<A>): A {
-  if (options?.internal) {
-    if (options.internal[name]) return options.internal[name]
+export function resolveAdapter<A = any>(options: ResolveAdapterOptions<A>): A {
+  const { name, domain, type, internal } = options
+
+  if (internal) {
+    if (internal[name]) return internal[name]
   }
 
   const packageJson = readPackageJson()
   const dependencyNames = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies })
-  const packageRegExp = `^.*${options?.domain}.*${name}.*$`
+  const packageRegExp = `^.*${domain}.*${name}.*$`
 
   const foundPackageName = dependencyNames.find((dependencyName: string): boolean => !!new RegExp(packageRegExp).exec(dependencyName))
 
   if (foundPackageName) {
     try {
       const importedModule = require(foundPackageName)
-      const baseModuleElementName = options?.type ? `${name}_${options.type}` : name
+      const baseModuleElementName = `${name}_${type}`
       const moduleElementNameA = pascalCase(baseModuleElementName)
       const moduleElementNameB = camelCase(baseModuleElementName)
       const moduleElementNameC = snakeCase(baseModuleElementName)
@@ -31,11 +33,11 @@ export function resolveAdapter<A = any>(name: string, options?: ResolveAdapterOp
         )
       }
     } catch (error) {
-      error.message = `Module "${foundPackageName}" is declared in package.json but there is a problem importing it, try running "npm install"\n\n${error.message}`
+      error.message = `Module "${foundPackageName}" is a dependency in package.json but there is a problem importing it, try running "npm install"\n\n${error.message}`
 
       throw error
     }
   } else {
-    throw new Error(`There isn't an installed module that matches the adapter specification for: "${name}"${options?.domain ? ` under "${options?.domain}" domain` : ''}`)
+    throw new Error(`There isn't an installed module that matches the adapter specification for: "${name}" under "${domain}" domain of "${type}" type`)
   }
 }

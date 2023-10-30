@@ -1,5 +1,12 @@
 export interface ResolveAdapterOptions<A = any> {
-  domain?: string
+  domain: string
   internal?: Record<string, A>
-  type?: string
+  name: string
+  type: string
+}
+
+export interface GatherAdaptersOptions<A = any> {
+  domain: string
+  type: string
+  internal?: A[]
 }
