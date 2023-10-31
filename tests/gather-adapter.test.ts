@@ -25,16 +25,9 @@ describe(gatherAdapters, (): void => {
     expect(adapters).toEqual(['InternalEngine', 'TechnologyEngine', 'OtherEngine'])
   })
 
-  it('throws one adapter can not be imported', async (): Promise<void> => {
-    let error: Error
+  it('ignores packages that can not be gathered', async (): Promise<void> => {
+    const adapters = gatherAdapters({ domain: 'other_domain', type: 'engine' })
 
-    try {
-      gatherAdapters({ domain: 'other_domain', type: 'engine' })
-    } catch (err) {
-      error = err
-    }
-    expect(error.message).toMatch(
-      /Module ".\/tests\/__fixtures__\/other_domain_thing" is a dependency in package.json but there is a problem importing it, try running "npm install".*/
-    )
+    expect(adapters).toEqual([])
   })
 })

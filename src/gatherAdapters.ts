@@ -29,10 +29,8 @@ export function gatherAdapters<A = any>(options: GatherAdaptersOptions): A[] {
       } else if (moduleExportNameC) {
         gatheredAdapters.push(importedModule[moduleExportNameC])
       }
-    } catch (error) {
-      error.message = `Module "${currentPackageName}" is a dependency in package.json but there is a problem importing it, try running "npm install"\n\n${error.message}`
-
-      throw error
+    } catch {
+      // Nothing to gather if the package can't be imported
     }
   }
 
