@@ -63,15 +63,15 @@ const adapters = gatherAdapters({ domain: 'token-registry', type: 'engine' })
 
 console.log(adapters)
 
-// > [[class RedisEngine], [class LocalEngine]]
+// > { redis: [class RedisEngine], local: [class LocalEngine] }
 ```
 
 #### Options
 
 - **`domain`** `String`
   The domain under which the adapters are meant to work, for example all engines for `@universal-packages/token-registry` will have the same domain `token-registry`.
-- **`internal`** `Array`
-  An array of internal adapters provided by the root library to be mixed with the gathered adapters.
+- **`internal`** `Object`
+  An object of named internal adapters provided by the root library to be mixed with the gathered adapters.
 
   ```js
   import { gatherAdapters } from '@universal-packages/adapter-resolver'
@@ -80,7 +80,7 @@ console.log(adapters)
 
   console.log(adapters)
 
-  // > [[class InternalAdapter], [class RedisEngine], [class LocalAdapter]]
+  // > { internal: [class InternalAdapter], redis: [class RedisEngine], local: [class LocalAdapter] }
   ```
 
 - **`type`** `String`

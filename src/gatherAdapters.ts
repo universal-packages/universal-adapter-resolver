@@ -1,31 +1,41 @@
 import { readPackageJson } from '@universal-packages/package-json'
 import { camelCase, pascalCase, snakeCase } from 'change-case'
 
-import { GatherAdaptersOptions } from './types'
+import { GatherAdaptersOptions, GatheredAdapters } from './types'
 
-export function gatherAdapters<A = any>(options: GatherAdaptersOptions): A[] {
+export function gatherAdapters<A = any>(options: GatherAdaptersOptions): GatheredAdapters<A> {
   const { domain, type, internal } = options
   const packageJson = readPackageJson()
   const dependencyNames = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies })
   const packagesNamesInDomain = dependencyNames.filter((dependencyName: string): boolean => dependencyName.includes(domain) && !dependencyName.includes('jest'))
-  const gatheredAdapters: A[] = [].concat(internal ? internal : [])
+  const gatheredAdapters: GatheredAdapters = { ...internal }
 
   for (let i = 0; i < packagesNamesInDomain.length; i++) {
     const currentPackageName = packagesNamesInDomain[i]
 
     try {
       const importedModule = require(currentPackageName)
+      const importedModuleKeys = Object.keys(importedModule)
+
       const moduleExportNameARegex = `.*_${snakeCase(type)}$`
       const moduleExportNameBRegex = `.*${camelCase(type)}$`
       const moduleExportNameCRegex = `.*${pascalCase(type)}$`
 
-      const matchingExportKeys = Object.keys(importedModule)
-        .filter((key: string): boolean => {
-          return !!new RegExp(moduleExportNameARegex).exec(key) || !!new RegExp(moduleExportNameBRegex).exec(key) || !!new RegExp(moduleExportNameCRegex).exec(key)
-        })
-        .map((moduleName: string): any => importedModule[moduleName])
+      for (let j = 0; j < importedModuleKeys.length; j++) {
+        const currentImportedModuleKey = importedModuleKeys[j]
 
-      gatheredAdapters.push(...matchingExportKeys)
+        if (
+          !!new RegExp(moduleExportNameARegex).exec(currentImportedModuleKey) ||
+          !!new RegExp(moduleExportNameBRegex).exec(currentImportedModuleKey) ||
+          !!new RegExp(moduleExportNameCRegex).exec(currentImportedModuleKey)
+        ) {
+          const referenceName = snakeCase(currentImportedModuleKey)
+            .replace(`_${snakeCase(type)}`, '')
+            .replace('_', '-')
+
+          gatheredAdapters[referenceName] = importedModule[currentImportedModuleKey]
+        }
+      }
     } catch (error) {
       error.message = `Module "${currentPackageName}" is a dependency in package.json but there is a problem importing it, try running "npm install"\n\n${error.message}`
 

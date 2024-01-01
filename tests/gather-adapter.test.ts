@@ -17,13 +17,13 @@ describe(gatherAdapters, (): void => {
   it('gather all adapters in a domain of the same type', async (): Promise<void> => {
     const adapters = gatherAdapters({ domain: 'my_domain', type: 'engine' })
 
-    expect(adapters).toEqual(['TechnologyEngine', 'OtherEngine'])
+    expect(adapters).toEqual({ technology: 'TechnologyEngine', other: 'OtherEngine' })
   })
 
   it('gather all adapters in a domain of the same type plus all the specified internals', async (): Promise<void> => {
-    const adapters = gatherAdapters({ domain: 'my_domain', type: 'engine', internal: ['InternalEngine'] })
+    const adapters = gatherAdapters({ domain: 'my_domain', type: 'engine', internal: { internal: 'InternalEngine' } })
 
-    expect(adapters).toEqual(['InternalEngine', 'TechnologyEngine', 'OtherEngine'])
+    expect(adapters).toEqual({ internal: 'InternalEngine', technology: 'TechnologyEngine', other: 'OtherEngine' })
   })
 
   it('gather all adapters in a domain all that exists in the same package', async (): Promise<void> => {
@@ -39,7 +39,7 @@ describe(gatherAdapters, (): void => {
 
     const adapters = gatherAdapters({ domain: 'my_domain', type: 'engine' })
 
-    expect(adapters).toEqual(['TechnologyEngine', 'OtherEngine'])
+    expect(adapters).toEqual({ technology: 'TechnologyEngine', other: 'OtherEngine' })
   })
 
   it('throws if one adapter can not be imported', async (): Promise<void> => {
@@ -58,6 +58,6 @@ describe(gatherAdapters, (): void => {
   it('ignore packages that match teh domain but are obviously meant for jest', async (): Promise<void> => {
     const adapters = gatherAdapters({ domain: 'jest_domain', type: 'engine' })
 
-    expect(adapters).toEqual([])
+    expect(adapters).toEqual({})
   })
 })

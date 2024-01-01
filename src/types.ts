@@ -8,5 +8,9 @@ export interface ResolveAdapterOptions<A = any> {
 export interface GatherAdaptersOptions<A = any> {
   domain: string
   type: string
-  internal?: A[]
+  internal?: Record<string, A>
+}
+
+export interface GatheredAdapters<A = any> {
+  [key: string]: A
 }
