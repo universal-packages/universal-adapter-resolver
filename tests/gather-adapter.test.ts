@@ -26,6 +26,22 @@ describe(gatherAdapters, (): void => {
     expect(adapters).toEqual(['InternalEngine', 'TechnologyEngine', 'OtherEngine'])
   })
 
+  it('gather all adapters in a domain all that exists in the same package', async (): Promise<void> => {
+    jest.mock('@universal-packages/package-json', (): any => ({
+      readPackageJson: (): any => ({
+        devDependencies: {
+          [path.resolve('./tests/__fixtures__')]: '1.0.0',
+          './tests/__fixtures__/other_domain_thing': '1.0.0',
+          './tests/__fixtures__/jest_domain_jest': '1.0.0'
+        }
+      })
+    }))
+
+    const adapters = gatherAdapters({ domain: 'my_domain', type: 'engine' })
+
+    expect(adapters).toEqual(['TechnologyEngine', 'OtherEngine'])
+  })
+
   it('throws if one adapter can not be imported', async (): Promise<void> => {
     let error: Error
 

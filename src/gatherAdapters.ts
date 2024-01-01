@@ -18,17 +18,14 @@ export function gatherAdapters<A = any>(options: GatherAdaptersOptions): A[] {
       const moduleExportNameARegex = `.*_${snakeCase(type)}$`
       const moduleExportNameBRegex = `.*${camelCase(type)}$`
       const moduleExportNameCRegex = `.*${pascalCase(type)}$`
-      const moduleExportNameA = Object.keys(importedModule).find((key: string): boolean => !!new RegExp(moduleExportNameARegex).exec(key))
-      const moduleExportNameB = Object.keys(importedModule).find((key: string): boolean => !!new RegExp(moduleExportNameBRegex).exec(key))
-      const moduleExportNameC = Object.keys(importedModule).find((key: string): boolean => !!new RegExp(moduleExportNameCRegex).exec(key))
 
-      if (moduleExportNameA) {
-        gatheredAdapters.push(importedModule[moduleExportNameA])
-      } else if (moduleExportNameB) {
-        gatheredAdapters.push(importedModule[moduleExportNameB])
-      } else if (moduleExportNameC) {
-        gatheredAdapters.push(importedModule[moduleExportNameC])
-      }
+      const matchingExportKeys = Object.keys(importedModule)
+        .filter((key: string): boolean => {
+          return !!new RegExp(moduleExportNameARegex).exec(key) || !!new RegExp(moduleExportNameBRegex).exec(key) || !!new RegExp(moduleExportNameCRegex).exec(key)
+        })
+        .map((moduleName: string): any => importedModule[moduleName])
+
+      gatheredAdapters.push(...matchingExportKeys)
     } catch (error) {
       error.message = `Module "${currentPackageName}" is a dependency in package.json but there is a problem importing it, try running "npm install"\n\n${error.message}`
 
