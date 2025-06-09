@@ -1,3 +1,2 @@
-export * from './resolveAdapter'
-export * from './gatherAdapters'
-export * from './types'
+export * from './AdapterResolver'
+export * from './AdapterResolver.types'
